@@ -5,64 +5,340 @@
 <title>ISDM Treasure Hunt | Team Registration</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-:root{--bg:#f5f3ed;--ink:#20241f;--muted:#687068;--green:#315b45;--pale:#e9f0e9;--line:#e5e1d8;--white:#fff}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif}
-main{max-width:1000px;margin:auto;padding:26px 17px 48px}.hero{text-align:center;padding:28px 12px 24px}.eyebrow{text-transform:uppercase;letter-spacing:2px;font-size:11px;font-weight:800;color:var(--green)}
-h1{font-size:clamp(32px,5vw,48px);line-height:1.04;margin:12px 0}.lead{max-width:660px;margin:auto;color:var(--muted);line-height:1.55}
-.timer{display:inline-flex;align-items:center;gap:15px;margin-top:20px;padding:12px 17px;border:1px solid var(--line);border-radius:14px;background:#fff}
-.timer strong{display:block;font-size:22px;color:var(--green);font-variant-numeric:tabular-nums}.timer small{display:block;text-transform:uppercase;letter-spacing:1px;font-size:10px;color:var(--muted)}
-.pill{background:var(--pale);color:var(--green);border-radius:30px;padding:6px 10px;font-size:12px;font-weight:800}
-.panel{background:#fff;border:1px solid var(--line);border-radius:17px;padding:21px;margin:17px 0;box-shadow:0 7px 24px #2221}
-h2{font-size:18px;margin:0 0 6px}.hint{color:var(--muted);font-size:13px;line-height:1.5;margin:0 0 15px}
-.formrow{display:grid;grid-template-columns:1.2fr 1fr auto;gap:9px}
-input,select{width:100%;padding:13px;border:1px solid #d6d8d1;border-radius:10px;font:inherit;background:#fff;min-width:0}
-button{border:0;border-radius:10px;background:var(--green);color:#fff;padding:13px 18px;font:inherit;font-weight:750;cursor:pointer}
-button:disabled{opacity:.5;cursor:not-allowed}
-.teams{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:14px}
-.team{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;min-height:150px}
-.teamhead{background:var(--pale);padding:13px;display:flex;justify-content:space-between;font-weight:850}.teamhead span:last-child{font-size:12px;color:var(--muted);font-weight:650}
-.names{padding:10px;display:flex;flex-direction:column;gap:6px}.person{background:#f7f7f4;padding:8px 10px;border-radius:8px;font-size:14px;overflow-wrap:anywhere}.empty{font-size:13px;color:#92988f;padding:8px}
-.status{display:flex;justify-content:space-between;gap:8px;align-items:center;font-size:13px;color:var(--muted)}
-.message{min-height:20px;font-size:13px;color:var(--green);margin-top:10px}.error{color:#a33}
-.note{font-size:12px;line-height:1.55;color:var(--muted)}.setup{background:#fff8e8;border:1px solid #ead9ad;border-radius:12px;padding:14px;margin-top:12px}.setup summary{font-weight:800;cursor:pointer}
-.setupgrid{display:grid;gap:8px;margin-top:12px}.setupgrid input{font-size:13px}
-footer{text-align:center;color:var(--muted);font-size:12px;padding:18px}
-@media(max-width:700px){.teams{grid-template-columns:repeat(2,1fr)}.formrow{grid-template-columns:1fr}.panel{padding:16px}}
-@media(max-width:380px){.teams{grid-template-columns:1fr}}
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap');
+
+:root{
+ --ink:#10243d;
+ --muted:#64758b;
+ --cream:#f4fbff;
+ --paper:#ffffff;
+ --line:#dcebf2;
+ --purple:#12345a;
+ --gold:#48c4c7;
+ --coral:#ff9b72;
+ --teal:#20aeb5;
+ --blue:#2676b9;
+ --pink:#e7a5b8;
+}
+*{box-sizing:border-box}
+html{min-height:100%;background:#edf7fb;scroll-behavior:smooth}
+body{
+ margin:0;color:var(--ink);
+ font-family:'DM Sans','Manrope',system-ui,-apple-system,'Segoe UI',sans-serif;
+ background:
+  radial-gradient(ellipse at 8% 8%,rgba(101,202,222,.22),transparent 30rem),
+  radial-gradient(ellipse at 94% 28%,rgba(102,157,213,.16),transparent 32rem),
+  linear-gradient(180deg,#f7fcff 0%,#edf7fb 55%,#f8fbfd 100%);
+ min-height:100vh;
+}
+main{width:min(100%,1080px);margin:0 auto;padding:24px 24px 42px}
+.hero{
+ position:relative;isolation:isolate;overflow:hidden;text-align:center;color:#fff;
+ background:
+  radial-gradient(ellipse at 78% 12%,rgba(61,190,207,.42),transparent 35%),
+  radial-gradient(ellipse at 8% 100%,rgba(48,112,174,.45),transparent 42%),
+  linear-gradient(125deg,#071d39 0%,#103c68 52%,#126b83 100%);
+ border:1px solid rgba(255,255,255,.22);border-radius:30px;
+ padding:48px 26px 38px;
+ box-shadow:0 22px 55px rgba(16,52,83,.18);
+}
+.hero:before{
+ content:"";position:absolute;z-index:-1;width:430px;height:430px;border:1px solid #ffffff1c;
+ border-radius:50%;right:-150px;top:-235px;box-shadow:0 0 0 35px #ffffff09,0 0 0 75px #ffffff07;
+}
+.hero:after{
+ content:"";position:absolute;z-index:-1;left:-8%;right:-8%;bottom:-95px;height:170px;
+ background:linear-gradient(180deg,#ffffff12,#ffffff04);
+ border-radius:50% 50% 0 0/35% 35% 0 0;
+}
+.eyebrow{
+ display:inline-flex;align-items:center;text-transform:uppercase;letter-spacing:2.2px;
+ font-size:11px;font-weight:800;color:#b9f3f1;background:#ffffff12;
+ border:1px solid #ffffff35;border-radius:30px;padding:9px 15px;
+}
+.hero h1{
+ font-family:'Manrope','DM Sans',sans-serif;
+ font-size:clamp(36px,6vw,62px);line-height:1.04;letter-spacing:-2.3px;
+ margin:22px 0 15px;font-weight:800;text-shadow:0 3px 18px #06172b55;
+}
+.lead{max-width:700px;margin:0 auto;color:#dceef7;font-size:16px;line-height:1.7;font-weight:500}
+.timer{
+ display:inline-flex;align-items:center;gap:16px;margin-top:25px;padding:13px 17px;
+ border:1px solid #ffffff35;border-radius:16px;background:#ffffff12;backdrop-filter:blur(8px);
+}
+.timer strong{display:block;font-size:22px;color:#fff;font-variant-numeric:tabular-nums;letter-spacing:.5px}
+.timer small{display:block;text-transform:uppercase;letter-spacing:1.4px;font-size:10px;color:#b9dce9;font-weight:800}
+.pill{background:#c9f5ee;color:#075c61;border-radius:30px;padding:8px 12px;font-size:11px;font-weight:800;white-space:nowrap}
+.panel{
+ background:rgba(255,255,255,.94);border:1px solid var(--line);border-radius:22px;
+ padding:24px 25px;margin:19px 0;box-shadow:0 10px 32px rgba(25,67,94,.055);
+}
+h2{font-family:'Manrope','DM Sans',sans-serif;font-size:22px;letter-spacing:-.6px;margin:0 0 8px;color:#12385b;font-weight:800}
+.hint{color:var(--muted);font-size:14px;line-height:1.65;margin:0 0 18px}
+.formrow{display:grid;grid-template-columns:minmax(0,1fr) 155px auto;gap:11px}
+input,select{
+ width:100%;min-width:0;min-height:54px;padding:13px 15px;border:1px solid #d5e4ec;
+ border-radius:13px;font:inherit;font-size:15px;background:#fbfdff;color:var(--ink);outline:none;
+ transition:border-color .2s,box-shadow .2s,background .2s;
+}
+input:focus,select:focus{border-color:#36aab6;box-shadow:0 0 0 4px #36aab61c;background:#fff}
+button{
+ min-height:54px;border:0;border-radius:13px;
+ background:linear-gradient(115deg,#36c1c0,#168da8);color:#fff;padding:13px 23px;
+ font:inherit;font-size:15px;font-weight:800;cursor:pointer;
+ box-shadow:0 7px 16px #168da833;transition:transform .2s,filter .2s,box-shadow .2s;
+}
+button:hover:not(:disabled){transform:translateY(-2px);filter:brightness(1.04);box-shadow:0 10px 22px #168da844}
+button:disabled{opacity:.5;cursor:not-allowed;box-shadow:none}
+.message{min-height:18px;font-size:13px;color:#16845b;margin-top:12px;font-weight:700}
+.error{color:#b4233c}
+.status{
+ display:flex;justify-content:space-between;gap:8px;align-items:center;
+ font-size:13px;color:var(--muted);padding:8px 4px 4px;
+}
+.status b{color:#12385b;font-size:23px;font-weight:800}
+.status .pill{background:#dff7f2;color:#08716c}
+.teams{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:13px}
+.team{
+ background:#fff;border:1px solid #dcebf2;border-radius:18px;overflow:hidden;
+ min-height:130px;box-shadow:0 8px 22px rgba(20,65,91,.07);
+ transition:transform .22s,box-shadow .22s;
+}
+.team:hover{transform:translateY(-4px);box-shadow:0 14px 28px rgba(20,65,91,.12)}
+.teamhead{
+ padding:15px 14px;display:flex;justify-content:space-between;align-items:center;gap:4px;
+ background:linear-gradient(110deg,#e0f5f7,#e9f2fb);font-weight:800;color:#12385b;
+}
+.team:nth-child(2) .teamhead{background:linear-gradient(110deg,#e5efff,#e8f7fa)}
+.team:nth-child(3) .teamhead{background:linear-gradient(110deg,#e0f5ee,#e8f4fb)}
+.team:nth-child(4) .teamhead{background:linear-gradient(110deg,#e8eaff,#edf7fb)}
+.teamhead span:first-child:before{content:"⚑ ";color:#219eaa}
+.teamhead span:last-child{font-size:10px;color:#6b8092;font-weight:800;white-space:nowrap}
+.names{padding:10px;display:flex;flex-direction:column;gap:7px;max-height:190px;overflow-y:auto;overscroll-behavior:contain}
+.person{
+ background:#f4f9fc;padding:9px 11px;border-radius:10px;font-size:12px;line-height:1.3;
+ overflow-wrap:anywhere;border:1px solid #e6f0f5;font-weight:600;color:#29445c;
+}
+.empty{font-size:12px;color:#8b9baa;padding:10px 4px}
+.how{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:15px}
+.howitem{
+ background:#f2f8fb;border:1px solid #e0edf3;border-radius:14px;
+ padding:14px;font-size:12px;line-height:1.55;color:#5d7183;
+}
+.howitem b{display:block;color:#167e91;margin-bottom:6px;font-size:13px}
+.note{font-size:12px;line-height:1.65;color:#718295}
+footer{text-align:center;color:#7b8d9c;font-size:12px;padding:22px 0 4px;font-weight:700}
+@media(max-width:760px){
+ main{padding:14px 12px 28px}
+ .hero{border-radius:23px;padding:34px 17px 29px}
+ .hero h1{font-size:clamp(35px,9vw,47px);margin:18px 0 12px;letter-spacing:-1.5px}
+ .lead{font-size:14px;max-width:470px;line-height:1.6}
+ .timer{margin-top:18px;padding:10px 13px}
+ .timer strong{font-size:19px}
+ .panel{padding:19px 16px;margin:14px 0;border-radius:18px}
+ .formrow{grid-template-columns:minmax(0,1fr) 112px;gap:9px}
+ .formrow button{grid-column:1/-1;width:100%;font-size:16px;min-height:55px}
+ .teams{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+ .team{min-height:112px}
+ .teamhead{padding:12px 10px}
+ .names{max-height:150px;padding:8px}
+ .person{font-size:12px;padding:8px}
+ .how{grid-template-columns:repeat(2,1fr);gap:8px}
+ .status b{font-size:20px}
+}
+@media(max-width:360px){
+ main{padding:9px}
+ .hero h1{font-size:32px}
+ .formrow{grid-template-columns:minmax(0,1fr) 100px}
+ .teamhead{font-size:12px}
+ .teamhead span:last-child{font-size:9px}
+ .names{max-height:130px}
+}
+@media(prefers-reduced-motion:no-preference){
+ .team{transition:transform .2s,box-shadow .2s}
+}
+
+/* Adventure visuals: styling only; all existing copy and application logic stay intact. */
+html{background:#071b2c}
+body{
+ background:
+  linear-gradient(180deg,rgba(5,20,34,.30),rgba(6,27,43,.66)),
+  url('./adventure-background.png') center center/cover fixed,
+  #071b2c;
+}
+body:before{
+ content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+ background:url('./adventure-background.png') center/cover no-repeat;
+ opacity:.16;filter:saturate(1.15);
+ animation:adventureDrift 32s ease-in-out infinite alternate;
+}
+@keyframes adventureDrift{
+ from{transform:scale(1.02) translate3d(-.5%,0,0)}
+ to{transform:scale(1.12) translate3d(.5%,-1%,0)}
+}
+main{padding-top:17px;padding-bottom:30px}
+.hero{
+ min-height:0;padding:27px 22px 24px;border-radius:24px;
+ background:
+  linear-gradient(90deg,rgba(3,17,32,.88) 0%,rgba(5,28,48,.68) 52%,rgba(5,26,44,.35) 100%),
+  url('./adventure-background.png') center 48%/cover no-repeat;
+ border:1px solid rgba(224,246,255,.34);
+ box-shadow:0 18px 48px rgba(1,12,25,.30),inset 0 0 0 1px rgba(255,255,255,.08);
+}
+.hero:before{
+ content:"";position:absolute;z-index:-1;inset:0;left:auto;top:0;right:0;
+ width:46%;height:100%;border:0;border-radius:0;
+ background:radial-gradient(circle at 65% 45%,rgba(255,190,91,.18),transparent 60%);
+ box-shadow:none;animation:treasureGlow 5s ease-in-out infinite alternate;
+}
+.hero:after{
+ content:"";position:absolute;z-index:0;left:0;right:0;bottom:0;height:3px;
+ background:linear-gradient(90deg,transparent,#f6c36a,#6bd6cf,transparent);
+ border-radius:0;animation:glint 4s linear infinite;
+}
+@keyframes treasureGlow{from{opacity:.45}to{opacity:1}}
+@keyframes glint{0%{transform:translateX(-35%);opacity:.45}50%{opacity:1}100%{transform:translateX(35%);opacity:.45}}
+.eyebrow{background:rgba(9,37,54,.58);border-color:#bde9e76b;color:#d2ffed}
+.hero h1{font-size:clamp(32px,5vw,49px);margin:13px 0 9px;letter-spacing:-1.7px}
+.lead{font-size:14px;line-height:1.55;max-width:650px;color:#edf9ff}
+.timer{margin-top:15px;padding:9px 13px;background:rgba(4,22,38,.52);border-color:#d8f4ff50}
+.timer strong{font-size:19px}
+.panel{
+ background:rgba(250,253,255,.96);backdrop-filter:blur(9px);
+ box-shadow:0 12px 34px rgba(1,18,34,.18);
+}
+.team{box-shadow:0 9px 24px rgba(1,18,34,.17)}
+.teamhead{background:linear-gradient(110deg,#d9f5f3,#e5efff)}
+.team:nth-child(2) .teamhead{background:linear-gradient(110deg,#fce9d9,#f4f0dc)}
+.team:nth-child(3) .teamhead{background:linear-gradient(110deg,#dff4e9,#e4f1fa)}
+.team:nth-child(4) .teamhead{background:linear-gradient(110deg,#e8e5ff,#f4e9f1)}
+@media(max-width:760px){
+ body{background-attachment:scroll}
+ body:before{background-position:58% center}
+ main{padding-top:10px}
+ .hero{padding:23px 15px 20px;border-radius:20px;background-position:58% center}
+ .hero h1{font-size:clamp(30px,8vw,39px);margin:12px 0 8px;letter-spacing:-1.2px}
+ .lead{font-size:13px;line-height:1.48}
+ .timer{margin-top:12px;padding:8px 11px}
+ .timer strong{font-size:17px}
+}
+@media(prefers-reduced-motion:reduce){
+ body:before,.hero:before,.hero:after{animation:none}
+}
+
+
+/* Small wildlife details: butterflies, fireflies and a clearer live counter. */
+.status{
+ position:relative;z-index:2;
+ padding:11px 15px;border:1px solid rgba(223,245,255,.28);
+ border-radius:15px;background:rgba(3,20,34,.82);
+ box-shadow:0 8px 22px rgba(0,0,0,.18);
+ color:#f1fbff;text-shadow:0 1px 2px #00111f;
+}
+.status b{color:#ffe08a;font-size:25px;text-shadow:0 0 12px rgba(255,211,112,.28)}
+.status .pill{background:#d8fff2;color:#075c4d;text-shadow:none}
+.wildlife-layer{
+ position:fixed;inset:0;z-index:1;pointer-events:none;overflow:hidden;
+}
+.firefly{
+ position:absolute;width:6px;height:6px;border-radius:50%;
+ background:#ffe98a;box-shadow:0 0 7px 3px #ffe98a88,0 0 18px 7px #b5f58b55;
+ opacity:0;animation:fireflyBlink var(--duration,7s) ease-in-out infinite;
+ animation-delay:var(--delay,0s);
+}
+@keyframes fireflyBlink{
+ 0%,100%{opacity:0;transform:translate(0,0) scale(.55)}
+ 25%{opacity:.95;transform:translate(8px,-13px) scale(1)}
+ 55%{opacity:.3;transform:translate(-7px,-24px) scale(.7)}
+ 78%{opacity:.9;transform:translate(5px,-8px) scale(1.1)}
+}
+.butterfly-flight{
+ position:absolute;left:-8%;top:24%;font-size:25px;filter:drop-shadow(0 2px 5px #00152299);
+ transform-origin:center;animation:butterflyJourney 25s ease-in-out infinite;
+}
+.butterfly-flight span{display:block;animation:wingFlutter .22s ease-in-out infinite alternate}
+@keyframes wingFlutter{from{transform:rotate(-12deg) scaleX(.82)}to{transform:rotate(12deg) scaleX(1.08)}}
+@keyframes butterflyJourney{
+ 0%{left:-8%;top:25%;transform:rotate(12deg)}
+ 18%{left:22%;top:17%;transform:rotate(-8deg)}
+ 38%{left:47%;top:31%;transform:rotate(12deg)}
+ 58%{left:69%;top:19%;transform:rotate(-10deg)}
+ 72%{left:82%;top:28%;transform:rotate(7deg)}
+ 82%,91%{left:86%;top:34%;transform:rotate(0deg)}
+ 100%{left:108%;top:22%;transform:rotate(-12deg)}
+}
+.leaf-perch{
+ position:absolute;right:3%;top:37%;font-size:34px;opacity:.86;
+ filter:drop-shadow(0 3px 6px #00152288);transform:rotate(-15deg);
+}
+.leaf-perch:after{
+ content:"";position:absolute;width:58px;height:2px;background:#537d48;
+ left:-27px;top:27px;transform:rotate(16deg);transform-origin:right;
+ opacity:.85;
+}
+.jungle-audio{
+ position:fixed;z-index:5;left:16px;bottom:16px;display:flex;align-items:center;gap:8px;
+ min-height:42px;padding:9px 14px;border:1px solid #d6f3df88;border-radius:30px;
+ background:rgba(4,29,39,.88);color:#efffe9;font:700 12px 'DM Sans',sans-serif;
+ box-shadow:0 7px 22px #00152255;cursor:pointer;backdrop-filter:blur(8px);
+}
+.jungle-audio:hover{transform:translateY(-1px);filter:brightness(1.08)}
+.jungle-audio .audio-icon{font-size:16px}
+@media(max-width:760px){
+ .status{padding:9px 11px;font-size:12px}
+ .status b{font-size:22px}
+ .butterfly-flight{font-size:21px;top:19%}
+ .leaf-perch{top:32%;right:2%;font-size:29px}
+ .jungle-audio{left:10px;bottom:10px;min-height:39px;padding:8px 12px}
+}
+@media(prefers-reduced-motion:reduce){
+ .firefly,.butterfly-flight,.butterfly-flight span{animation:none}
+ .firefly{opacity:.55}
+}
+
 </style></head>
-<body><main>
+<body>
+<div class="wildlife-layer" aria-hidden="true">
+  <span class="firefly" style="left:8%;top:42%;--duration:8s;--delay:-2s"></span>
+  <span class="firefly" style="left:19%;top:72%;--duration:6s;--delay:-4s"></span>
+  <span class="firefly" style="left:34%;top:52%;--duration:9s;--delay:-1s"></span>
+  <span class="firefly" style="left:51%;top:78%;--duration:7s;--delay:-5s"></span>
+  <span class="firefly" style="left:64%;top:45%;--duration:8s;--delay:-3s"></span>
+  <span class="firefly" style="left:78%;top:67%;--duration:6s;--delay:-2s"></span>
+  <span class="firefly" style="left:92%;top:50%;--duration:9s;--delay:-6s"></span>
+  <span class="leaf-perch">🌿</span>
+  <span class="butterfly-flight"><span>🦋</span></span>
+</div>
+<button class="jungle-audio" id="jungleAudio" type="button" aria-label="Play jungle ambience">
+  <span class="audio-icon" id="audioIcon">♪</span><span id="audioLabel">Play jungle ambience</span>
+</button>
+
+<main>
 <header class="hero">
 <div class="eyebrow">ISDM Campus · Festival Celebration</div>
-<h1>Choose Your Team.<br>Let Fate Decide!</h1>
-<p class="lead">Spot your friends in a team, add your name there, and watch the names shuffle! The final teams will be equally divided across all four teams.</p>
+<h1>Ready to Hunt?<br>Let the Fun Begin!</h1>
+<p class="lead">Spot your gang, pick a team, and drop your name! Then watch the system play musical chairs with everyone after each signup. Your friends may move, your team may change — chaos, but make it balanced! </p>
 <div class="timer"><div><small>Registration closes in</small><strong id="countdown">Loading…</strong></div><span class="pill" id="state">Connecting…</span></div>
 </header>
 
 <section class="panel">
-<h2>Join the Treasure Hunt</h2>
-<p class="hint">Enter your name and select the column where you want to add it. Your choice is recorded, but the displayed names will be shuffled across all four teams after each registration. Final team membership is random.</p>
+<h2>🏴‍☠️ Join the Adventure</h2>
+<p class="hint">Drop your name, choose a team to join, and you’re in. Every new signup shakes up all four teams — so keep an eye on where your crew lands!</p>
 <form id="form" class="formrow">
-<input id="name" maxlength="60" placeholder="Enter your full name" autocomplete="name" required>
+<input id="name" maxlength="60" placeholder="Your name, adventurer…" autocomplete="name" required>
 <select id="choice" aria-label="Choose a team"><option value="1">Team 1</option><option value="2">Team 2</option><option value="3">Team 3</option><option value="4">Team 4</option></select>
-<button id="submit" type="submit" disabled>Add my name</button>
+<button id="submit" type="submit" disabled>I’m In! 🏴‍☠️</button>
 </form><div class="message" id="message" role="status"></div>
 </section>
 
-<div class="status"><span><b id="total">0</b> participants registered</span><span class="pill" id="connection">Not connected</span></div>
+<div class="status"><span>🔥 <b id="total">0</b> adventurers joined so far!</span><span class="pill" id="connection">Not connected</span></div>
 <section class="teams" id="teams" aria-live="polite"></section>
 
 <section class="panel">
-<h2>How it works</h2>
-<p class="hint" style="margin-bottom:0">1. Add your name under any team column. 2. Names shuffle and are divided as equally as possible. 3. Registration closes on 4 November 2026 at 11:59 PM IST. 4. After closing, no new entries are accepted and the final allocation stays fixed.</p>
-<details class="setup">
-<summary>Admin setup — connect the shared registration database</summary>
-<p class="note">A Supabase project is needed for everyone to see the same registrations. Create a project, run the supplied <b>setup.sql</b> in its SQL Editor, then paste the Project URL and anon/public key below. These are public client settings, not your service-role key.</p>
-<div class="setupgrid">
-<input id="url" placeholder="Supabase Project URL — https://....supabase.co">
-<input id="key" placeholder="Supabase anon / publishable key">
-<button id="connect" type="button">Connect shared database</button>
-</div><p class="note" id="setupmsg"></p>
-</details>
+<h2>🧭 How it works</h2>
+<div class="how"><div class="howitem"><b>01 · Choose</b>Select any one of the four teams.</div><div class="howitem"><b>02 · Join</b>Enter your name and tap Join the hunt.</div><div class="howitem"><b>03 · Shuffle</b>After every signup, the system shuffles all names across the four teams.</div><div class="howitem"><b>04 · Final teams</b>When registration closes, the teams shown at that moment become final!</div></div>
+<p class="note">The teams are reshuffled automatically after every registration. When registration closes on 4 November at 11:59 PM IST, the latest team arrangement becomes final.</p>
+
 <p class="note">Privacy note: participant names will be visible to anyone who opens this page. Collect only names needed for team formation. The site does not ask for phone numbers or email addresses.</p>
 </section>
 <footer>Treasure Hunt · ISDM Festival Celebration</footer>
@@ -81,7 +357,7 @@ function render(){
  const groups=[[],[],[],[]];
  // The database stores the shuffled team allocation, so every device sees
  // the same four teams. The allocation is re-randomised after each entry.
- rows.forEach(r=>groups[((r.display_team||1)-1)].push(r));
+ rows.forEach(r=>groups[((r.display_team||r.selected_team||1)-1)].push(r));
  $('total').textContent=rows.length;
  $('teams').innerHTML='';
  groups.forEach((g,i)=>{
@@ -98,9 +374,11 @@ function render(){
 function setMessage(s,error=false){$('message').textContent=s;$('message').className='message'+(error?' error':'');}
 async function loadRows(){
  if(!client)return;
- const {data,error}=await client.from('treasure_hunt_participants').select('id,name,selected_team,display_team,final_team,created_at').order('created_at');
+ if(Date.now()>=CLOSE_AT){
+  }
+ const {data,error}=await client.from('treasure_hunt_participants').select('id,name,selected_team,display_team,created_at').order('created_at');
  if(error){setMessage('Could not load registrations: '+error.message,true);return;}
- rows=data||[];render();$('connection').textContent='Live shared list';$('state').textContent=Date.now()>=CLOSE_AT?'Closed':'Registration open';
+ rows=data||[];render();$('connection').textContent='Live shared list';$('state').textContent=Date.now()>=CLOSE_AT?'Final teams':'Registration open';
 }
 async function connect(url,key){
  try{
@@ -112,10 +390,9 @@ async function connect(url,key){
   if(channel)await client.removeChannel(channel);
   channel=client.channel('treasure-hunt-live').on('postgres_changes',{event:'*',schema:'public',table:'treasure_hunt_participants'},()=>loadRows()).subscribe();
   await loadRows();$('submit').disabled=Date.now()>=CLOSE_AT;
-  $('setupmsg').textContent='Connected. This browser is now using the shared database.';
- }catch(e){client=null;$('setupmsg').textContent='Connection failed: '+e.message+' — check the URL, public key and SQL setup.';$('connection').textContent='Not connected';}
+  
+ }catch(e){client=null;setMessage('Could not connect to the shared registration list. Please contact the organiser.',true);$('connection').textContent='Not connected';}
 }
-$('connect').addEventListener('click',()=>connect($('url').value.trim(),$('key').value.trim()));
 $('form').addEventListener('submit',async e=>{
  e.preventDefault();if(!client){setMessage('The shared database is not connected yet. Ask the organiser to finish setup.',true);return;}
  if(Date.now()>=CLOSE_AT){updateClock();setMessage('Registration is closed.',true);return;}
@@ -123,8 +400,8 @@ $('form').addEventListener('submit',async e=>{
  $('submit').disabled=true;setMessage('Adding your name…');
  const {data,error}=await client.rpc('register_treasure_hunt_participant',{p_name:name,p_selected_team:Number($('choice').value)});
  if(error){setMessage(error.message,true);$('submit').disabled=false;return;}
- $('name').value='';setMessage('Your name is registered! The team names have been shuffled.');
- await loadRows();$('submit').disabled=false;
+ $('name').value='';setMessage('You’re in! All names have been shuffled across the four teams. Check where everyone landed!');
+ await loadRows();$('submit').disabled=Date.now()>=CLOSE_AT;
 });
 function updateClock(){
  const d=CLOSE_AT-Date.now();
@@ -137,7 +414,119 @@ try{
  const saved=JSON.parse(localStorage.getItem(CFG)||'null');
  const url=SUPABASE_URL || (saved&&saved.url) || '';
  const key=SUPABASE_ANON_KEY || (saved&&saved.key) || '';
- if(url&&key){$('url').value=url;$('key').value=key;connect(url,key);}
+ if(url&&key){connect(url,key);}
 }catch(e){}
 render();
-</script></body></html>
+</script>
+<script>
+/* Jungle ambience: try autoplay; if the browser blocks sound, unlock on first visitor interaction. */
+(() => {
+  const button = document.getElementById('jungleAudio');
+  if (!button) return;
+  const label = document.getElementById('audioLabel');
+  const icon = document.getElementById('audioIcon');
+  let context = null, master = null, running = false, timers = [], unlocked = false;
+
+  const stopTimers = () => { timers.forEach(clearInterval); timers = []; };
+
+  function tone(freq, duration, volume, type='sine', endFreq=null) {
+    if (!context || !master || !running) return;
+    const osc = context.createOscillator(), gain = context.createGain();
+    const now = context.currentTime;
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, now);
+    if (endFreq) osc.frequency.exponentialRampToValueAtTime(endFreq, now + duration);
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.exponentialRampToValueAtTime(volume, now + .08);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+    osc.connect(gain); gain.connect(master);
+    osc.start(now); osc.stop(now + duration + .04);
+  }
+
+  function setButton(isOn) {
+    label.textContent = isOn ? 'Jungle ambience on' : 'Play jungle ambience';
+    icon.textContent = isOn ? '♫' : '♪';
+    button.setAttribute('aria-label', isOn ? 'Turn off jungle ambience' : 'Play jungle ambience');
+  }
+
+  async function start() {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!AudioCtx) {
+      label.textContent = 'Audio not supported';
+      return false;
+    }
+    try {
+      context = context || new AudioCtx();
+      if (context.state === 'suspended') await context.resume();
+      master = master || context.createGain();
+      master.gain.cancelScheduledValues(context.currentTime);
+      master.gain.setValueAtTime(0.0001, context.currentTime);
+      master.gain.linearRampToValueAtTime(.20, context.currentTime + 1.1);
+      if (!master.__connected) {
+        master.connect(context.destination);
+        master.__connected = true;
+      }
+      running = true;
+      tone(110, 8, .018, 'sine');
+      tone(164.8, 7, .009, 'sine');
+      stopTimers();
+      timers.push(setInterval(() => {
+        tone(1850 + Math.random()*500, .12, .012, 'sine');
+        if (Math.random() > .45) tone(2100 + Math.random()*450, .09, .008, 'sine');
+      }, 720));
+      timers.push(setInterval(() => {
+        if (Math.random() > .28) {
+          const f = 900 + Math.random()*700;
+          tone(f, .24, .018, 'sine', f*1.55);
+          setTimeout(() => tone(f*1.35, .19, .012, 'sine', f*1.7), 190);
+        }
+      }, 2600));
+      timers.push(setInterval(() => {
+        tone(220 + Math.random()*45, 2.8, .006, 'triangle', 170 + Math.random()*35);
+      }, 4200));
+      setButton(true);
+      return true;
+    } catch (e) {
+      running = false;
+      setButton(false);
+      return false;
+    }
+  }
+
+  function stop() {
+    running = false;
+    stopTimers();
+    if (context && master) {
+      master.gain.cancelScheduledValues(context.currentTime);
+      master.gain.setTargetAtTime(.0001, context.currentTime, .18);
+    }
+    setButton(false);
+  }
+
+  button.addEventListener('click', async (event) => {
+    event.stopPropagation();
+    if (running) stop();
+    else {
+      unlocked = true;
+      await start();
+    }
+  });
+
+  // A best-effort autoplay attempt. Most browsers will block audible sound here.
+  start().then(ok => {
+    if (!ok) label.textContent = 'Tap anywhere for jungle music';
+  });
+
+  // Browsers that block autoplay allow audio after the visitor's first interaction.
+  const unlockOnFirstInteraction = async () => {
+    if (unlocked || running) return;
+    unlocked = true;
+    await start();
+    document.removeEventListener('pointerdown', unlockOnFirstInteraction, true);
+    document.removeEventListener('keydown', unlockOnFirstInteraction, true);
+  };
+  document.addEventListener('pointerdown', unlockOnFirstInteraction, true);
+  document.addEventListener('keydown', unlockOnFirstInteraction, true);
+})();
+</script>
+</body></html>
