@@ -306,7 +306,6 @@ main{padding-top:17px;padding-bottom:30px}
   <span class="firefly" style="left:64%;top:45%;--duration:8s;--delay:-3s"></span>
   <span class="firefly" style="left:78%;top:67%;--duration:6s;--delay:-2s"></span>
   <span class="firefly" style="left:92%;top:50%;--duration:9s;--delay:-6s"></span>
-  <span class="leaf-perch">🌿</span>
   <span class="butterfly-flight"><span>🦋</span></span>
 </div>
 <button class="jungle-audio" id="jungleAudio" type="button" aria-label="Play jungle ambience">
@@ -418,115 +417,44 @@ try{
 }catch(e){}
 render();
 </script>
+<audio id="jungleTrack" src="jungle-music.m4a" preload="auto" loop playsinline></audio>
 <script>
-/* Jungle ambience: try autoplay; if the browser blocks sound, unlock on first visitor interaction. */
+/* Play the supplied jungle soundtrack. Try autoplay, then unlock on the first visitor interaction if blocked. */
 (() => {
+  const audio = document.getElementById('jungleTrack');
   const button = document.getElementById('jungleAudio');
-  if (!button) return;
+  if (!audio || !button) return;
   const label = document.getElementById('audioLabel');
   const icon = document.getElementById('audioIcon');
-  let context = null, master = null, running = false, timers = [], unlocked = false;
-
-  const stopTimers = () => { timers.forEach(clearInterval); timers = []; };
-
-  function tone(freq, duration, volume, type='sine', endFreq=null) {
-    if (!context || !master || !running) return;
-    const osc = context.createOscillator(), gain = context.createGain();
-    const now = context.currentTime;
-    osc.type = type;
-    osc.frequency.setValueAtTime(freq, now);
-    if (endFreq) osc.frequency.exponentialRampToValueAtTime(endFreq, now + duration);
-    gain.gain.setValueAtTime(0.0001, now);
-    gain.gain.exponentialRampToValueAtTime(volume, now + .08);
-    gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
-    osc.connect(gain); gain.connect(master);
-    osc.start(now); osc.stop(now + duration + .04);
+  let userPaused = false;
+  function updateButton(on) {
+    label.textContent = on ? 'Jungle music on' : 'Play jungle music';
+    icon.textContent = on ? '♫' : '♪';
+    button.setAttribute('aria-label', on ? 'Turn off jungle music' : 'Play jungle music');
   }
-
-  function setButton(isOn) {
-    label.textContent = isOn ? 'Jungle ambience on' : 'Play jungle ambience';
-    icon.textContent = isOn ? '♫' : '♪';
-    button.setAttribute('aria-label', isOn ? 'Turn off jungle ambience' : 'Play jungle ambience');
+  async function playMusic() {
+    try { await audio.play(); userPaused = false; updateButton(true); return true; }
+    catch (e) { updateButton(false); return false; }
   }
-
-  async function start() {
-    const AudioCtx = window.AudioContext || window.webkitAudioContext;
-    if (!AudioCtx) {
-      label.textContent = 'Audio not supported';
-      return false;
-    }
-    try {
-      context = context || new AudioCtx();
-      if (context.state === 'suspended') await context.resume();
-      master = master || context.createGain();
-      master.gain.cancelScheduledValues(context.currentTime);
-      master.gain.setValueAtTime(0.0001, context.currentTime);
-      master.gain.linearRampToValueAtTime(.20, context.currentTime + 1.1);
-      if (!master.__connected) {
-        master.connect(context.destination);
-        master.__connected = true;
-      }
-      running = true;
-      tone(110, 8, .018, 'sine');
-      tone(164.8, 7, .009, 'sine');
-      stopTimers();
-      timers.push(setInterval(() => {
-        tone(1850 + Math.random()*500, .12, .012, 'sine');
-        if (Math.random() > .45) tone(2100 + Math.random()*450, .09, .008, 'sine');
-      }, 720));
-      timers.push(setInterval(() => {
-        if (Math.random() > .28) {
-          const f = 900 + Math.random()*700;
-          tone(f, .24, .018, 'sine', f*1.55);
-          setTimeout(() => tone(f*1.35, .19, .012, 'sine', f*1.7), 190);
-        }
-      }, 2600));
-      timers.push(setInterval(() => {
-        tone(220 + Math.random()*45, 2.8, .006, 'triangle', 170 + Math.random()*35);
-      }, 4200));
-      setButton(true);
-      return true;
-    } catch (e) {
-      running = false;
-      setButton(false);
-      return false;
-    }
-  }
-
-  function stop() {
-    running = false;
-    stopTimers();
-    if (context && master) {
-      master.gain.cancelScheduledValues(context.currentTime);
-      master.gain.setTargetAtTime(.0001, context.currentTime, .18);
-    }
-    setButton(false);
-  }
-
   button.addEventListener('click', async (event) => {
     event.stopPropagation();
-    if (running) stop();
-    else {
-      unlocked = true;
-      await start();
+    if (!audio.paused) { userPaused = true; audio.pause(); updateButton(false); }
+    else { userPaused = false; await playMusic(); }
+  });
+  audio.addEventListener('play', () => updateButton(true));
+  audio.addEventListener('pause', () => updateButton(false));
+  playMusic();
+  const unlock = async () => {
+    if (userPaused || !audio.paused) return;
+    if (await playMusic()) {
+      document.removeEventListener('pointerdown', unlock, true);
+      document.removeEventListener('keydown', unlock, true);
+      document.removeEventListener('touchstart', unlock, true);
     }
-  });
-
-  // A best-effort autoplay attempt. Most browsers will block audible sound here.
-  start().then(ok => {
-    if (!ok) label.textContent = 'Tap anywhere for jungle music';
-  });
-
-  // Browsers that block autoplay allow audio after the visitor's first interaction.
-  const unlockOnFirstInteraction = async () => {
-    if (unlocked || running) return;
-    unlocked = true;
-    await start();
-    document.removeEventListener('pointerdown', unlockOnFirstInteraction, true);
-    document.removeEventListener('keydown', unlockOnFirstInteraction, true);
   };
-  document.addEventListener('pointerdown', unlockOnFirstInteraction, true);
-  document.addEventListener('keydown', unlockOnFirstInteraction, true);
+  document.addEventListener('pointerdown', unlock, true);
+  document.addEventListener('keydown', unlock, true);
+  document.addEventListener('touchstart', unlock, {capture:true, passive:true});
 })();
 </script>
 </body></html>
