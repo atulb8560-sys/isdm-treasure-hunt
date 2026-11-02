@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ISDM Treasure Hunt | Team Registration</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--bg:#f5f3ed;--ink:#20241f;--muted:#687068;--green:#315b45;--pale:#e9f0e9;--line:#e5e1d8;--white:#fff}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:1000px;margin:auto;padding:26px 17px 48px}.hero{text-align:center;padding:28px 12px 24px}.eyebrow{text-transform:uppercase;letter-spacing:2px;font-size:11px;font-weight:800;color:var(--green)}
+h1{font-size:clamp(32px,5vw,48px);line-height:1.04;margin:12px 0}.lead{max-width:660px;margin:auto;color:var(--muted);line-height:1.55}
+.timer{display:inline-flex;align-items:center;gap:15px;margin-top:20px;padding:12px 17px;border:1px solid var(--line);border-radius:14px;background:#fff}
+.timer strong{display:block;font-size:22px;color:var(--green);font-variant-numeric:tabular-nums}.timer small{display:block;text-transform:uppercase;letter-spacing:1px;font-size:10px;color:var(--muted)}
+.pill{background:var(--pale);color:var(--green);border-radius:30px;padding:6px 10px;font-size:12px;font-weight:800}
+.panel{background:#fff;border:1px solid var(--line);border-radius:17px;padding:21px;margin:17px 0;box-shadow:0 7px 24px #2221}
+h2{font-size:18px;margin:0 0 6px}.hint{color:var(--muted);font-size:13px;line-height:1.5;margin:0 0 15px}
+.formrow{display:grid;grid-template-columns:1.2fr 1fr auto;gap:9px}
+input,select{width:100%;padding:13px;border:1px solid #d6d8d1;border-radius:10px;font:inherit;background:#fff;min-width:0}
+button{border:0;border-radius:10px;background:var(--green);color:#fff;padding:13px 18px;font:inherit;font-weight:750;cursor:pointer}
+button:disabled{opacity:.5;cursor:not-allowed}
+.teams{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:14px}
+.team{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;min-height:150px}
+.teamhead{background:var(--pale);padding:13px;display:flex;justify-content:space-between;font-weight:850}.teamhead span:last-child{font-size:12px;color:var(--muted);font-weight:650}
+.names{padding:10px;display:flex;flex-direction:column;gap:6px}.person{background:#f7f7f4;padding:8px 10px;border-radius:8px;font-size:14px;overflow-wrap:anywhere}.empty{font-size:13px;color:#92988f;padding:8px}
+.status{display:flex;justify-content:space-between;gap:8px;align-items:center;font-size:13px;color:var(--muted)}
+.message{min-height:20px;font-size:13px;color:var(--green);margin-top:10px}.error{color:#a33}
+.note{font-size:12px;line-height:1.55;color:var(--muted)}.setup{background:#fff8e8;border:1px solid #ead9ad;border-radius:12px;padding:14px;margin-top:12px}.setup summary{font-weight:800;cursor:pointer}
+.setupgrid{display:grid;gap:8px;margin-top:12px}.setupgrid input{font-size:13px}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:18px}
+@media(max-width:700px){.teams{grid-template-columns:repeat(2,1fr)}.formrow{grid-template-columns:1fr}.panel{padding:16px}}
+@media(max-width:380px){.teams{grid-template-columns:1fr}}
+</style></head>
+<body><main>
+<header class="hero">
+<div class="eyebrow">ISDM Campus · Festival Celebration</div>
+<h1>Choose Your Team.<br>Let Fate Decide!</h1>
+<p class="lead">Spot your friends in a team, add your name there, and watch the names shuffle! The final teams will be equally divided across all four teams.</p>
+<div class="timer"><div><small>Registration closes in</small><strong id="countdown">Loading…</strong></div><span class="pill" id="state">Connecting…</span></div>
+</header>
+
+<section class="panel">
+<h2>Join the Treasure Hunt</h2>
+<p class="hint">Enter your name and select the column where you want to add it. Your choice is recorded, but the displayed names will be shuffled across all four teams after each registration. Final team membership is random.</p>
+<form id="form" class="formrow">
+<input id="name" maxlength="60" placeholder="Enter your full name" autocomplete="name" required>
+<select id="choice" aria-label="Choose a team"><option value="1">Team 1</option><option value="2">Team 2</option><option value="3">Team 3</option><option value="4">Team 4</option></select>
+<button id="submit" type="submit" disabled>Add my name</button>
+</form><div class="message" id="message" role="status"></div>
+</section>
+
+<div class="status"><span><b id="total">0</b> participants registered</span><span class="pill" id="connection">Not connected</span></div>
+<section class="teams" id="teams" aria-live="polite"></section>
+
+<section class="panel">
+<h2>How it works</h2>
+<p class="hint" style="margin-bottom:0">1. Add your name under any team column. 2. Names shuffle and are divided as equally as possible. 3. Registration closes on 4 November 2026 at 11:59 PM IST. 4. After closing, no new entries are accepted and the final allocation stays fixed.</p>
+<details class="setup">
+<summary>Admin setup — connect the shared registration database</summary>
+<p class="note">A Supabase project is needed for everyone to see the same registrations. Create a project, run the supplied <b>setup.sql</b> in its SQL Editor, then paste the Project URL and anon/public key below. These are public client settings, not your service-role key.</p>
+<div class="setupgrid">
+<input id="url" placeholder="Supabase Project URL — https://....supabase.co">
+<input id="key" placeholder="Supabase anon / publishable key">
+<button id="connect" type="button">Connect shared database</button>
+</div><p class="note" id="setupmsg"></p>
+</details>
+<p class="note">Privacy note: participant names will be visible to anyone who opens this page. Collect only names needed for team formation. The site does not ask for phone numbers or email addresses.</p>
+</section>
+<footer>Treasure Hunt · ISDM Festival Celebration</footer>
+</main>
+<script>
+const CLOSE_AT = new Date('2026-11-04T23:59:00+05:30').getTime();
+// Paste your Supabase Project URL and anon/publishable key here before publishing.
+// These are public browser credentials. Never paste the service_role/secret key.
+const SUPABASE_URL = 'https://iqxrfqlwdzvxcvldzzrg.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_JjDMhsigbwBof-Fu1sn-Fg_Mtpl_7d3';
+const CFG='isdm_th_supabase_config_v1';
+let client=null, rows=[], channel=null;
+const $=id=>document.getElementById(id);
+function shuffle(a){a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function render(){
+ const groups=[[],[],[],[]];
+ // The database stores the shuffled team allocation, so every device sees
+ // the same four teams. The allocation is re-randomised after each entry.
+ rows.forEach(r=>groups[((r.display_team||1)-1)].push(r));
+ $('total').textContent=rows.length;
+ $('teams').innerHTML='';
+ groups.forEach((g,i)=>{
+  const card=document.createElement('article');card.className='team';
+  const head=document.createElement('div');head.className='teamhead';
+  const t=document.createElement('span');t.textContent='TEAM '+(i+1);
+  const c=document.createElement('span');c.textContent=g.length+' members';
+  head.append(t,c);const names=document.createElement('div');names.className='names';
+  if(!g.length){const e=document.createElement('div');e.className='empty';e.textContent='No names yet';names.append(e);}
+  g.forEach(r=>{const el=document.createElement('div');el.className='person';el.textContent=r.name;names.append(el);});
+  card.append(head,names);$('teams').append(card);
+ });
+}
+function setMessage(s,error=false){$('message').textContent=s;$('message').className='message'+(error?' error':'');}
+async function loadRows(){
+ if(!client)return;
+ const {data,error}=await client.from('treasure_hunt_participants').select('id,name,selected_team,display_team,final_team,created_at').order('created_at');
+ if(error){setMessage('Could not load registrations: '+error.message,true);return;}
+ rows=data||[];render();$('connection').textContent='Live shared list';$('state').textContent=Date.now()>=CLOSE_AT?'Closed':'Registration open';
+}
+async function connect(url,key){
+ try{
+  if(!window.supabase)throw new Error('Could not load Supabase library. Check your internet connection.');
+  client=window.supabase.createClient(url,key);
+  const {error}=await client.from('treasure_hunt_participants').select('id').limit(1);
+  if(error)throw error;
+  localStorage.setItem(CFG,JSON.stringify({url,key}));
+  if(channel)await client.removeChannel(channel);
+  channel=client.channel('treasure-hunt-live').on('postgres_changes',{event:'*',schema:'public',table:'treasure_hunt_participants'},()=>loadRows()).subscribe();
+  await loadRows();$('submit').disabled=Date.now()>=CLOSE_AT;
+  $('setupmsg').textContent='Connected. This browser is now using the shared database.';
+ }catch(e){client=null;$('setupmsg').textContent='Connection failed: '+e.message+' — check the URL, public key and SQL setup.';$('connection').textContent='Not connected';}
+}
+$('connect').addEventListener('click',()=>connect($('url').value.trim(),$('key').value.trim()));
+$('form').addEventListener('submit',async e=>{
+ e.preventDefault();if(!client){setMessage('The shared database is not connected yet. Ask the organiser to finish setup.',true);return;}
+ if(Date.now()>=CLOSE_AT){updateClock();setMessage('Registration is closed.',true);return;}
+ const name=$('name').value.trim();if(!name)return;
+ $('submit').disabled=true;setMessage('Adding your name…');
+ const {data,error}=await client.rpc('register_treasure_hunt_participant',{p_name:name,p_selected_team:Number($('choice').value)});
+ if(error){setMessage(error.message,true);$('submit').disabled=false;return;}
+ $('name').value='';setMessage('Your name is registered! The team names have been shuffled.');
+ await loadRows();$('submit').disabled=false;
+});
+function updateClock(){
+ const d=CLOSE_AT-Date.now();
+ if(d<=0){$('countdown').textContent='Closed';$('state').textContent='Registration closed';$('submit').disabled=true;$('name').disabled=true;$('choice').disabled=true;return;}
+ const days=Math.floor(d/86400000),h=Math.floor(d%86400000/3600000),m=Math.floor(d%3600000/60000),s=Math.floor(d%60000/1000);
+ $('countdown').textContent=`${days}d ${String(h).padStart(2,'0')}h ${String(m).padStart(2,'0')}m ${String(s).padStart(2,'0')}s`;
+}
+updateClock();setInterval(updateClock,1000);
+try{
+ const saved=JSON.parse(localStorage.getItem(CFG)||'null');
+ const url=SUPABASE_URL || (saved&&saved.url) || '';
+ const key=SUPABASE_ANON_KEY || (saved&&saved.key) || '';
+ if(url&&key){$('url').value=url;$('key').value=key;connect(url,key);}
+}catch(e){}
+render();
+</script></body></html>
